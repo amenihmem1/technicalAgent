@@ -1,0 +1,2 @@
+version: 1
+run: sh startup.sh

@@ -4,17 +4,19 @@ import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from interview_ai.cv.profile_extractor import (
     CandidateInfo,
     extract_candidate_info,
     extract_text_from_cv,
     normalize_cv_text,
 )
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +97,7 @@ class CVRAGStore:
             raise ValueError("chunk_size / overlap invalides")
 
         self.model_name = model_name
-        self.model: SentenceTransformer | None = None
+        self.model: "SentenceTransformer | None" = None
         self.dim = 384
 
         self.chunk_size = chunk_size
@@ -110,6 +112,8 @@ class CVRAGStore:
     def _get_model(self) -> SentenceTransformer:
         if self.model is None:
             try:
+                from sentence_transformers import SentenceTransformer
+
                 self.model = SentenceTransformer(self.model_name)
                 self.dim = self.model.get_sentence_embedding_dimension()
             except Exception as exc:

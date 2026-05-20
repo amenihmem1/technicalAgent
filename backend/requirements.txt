@@ -25,4 +25,6 @@ PyMuPDF==1.27.2.3
 tf-keras==2.19.0
 tensorflow==2.19.1
 Pillow==12.2.0
-sentence-transformers==5.1.1
+sentence-transformers==2.7.0
+torch==2.2.2
+transformers==4.41.2
