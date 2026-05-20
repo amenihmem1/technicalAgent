@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - ./.env
+    environment:
+      CUSTOM_EMOTION_MODEL_DIR: /app/data/models/emotion/efficientnet_b3_20260425_053142
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend/data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_APP_URL: http://localhost:3001
+        NEXT_PUBLIC_REPORT_SHARE_BASE_URL: http://localhost:3001
+    environment:
+      TECH_API_BASE_URL: http://backend:8000
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
+      NEXT_PUBLIC_REPORT_SHARE_BASE_URL: http://localhost:3001
+    ports:
+      - "3001:8080"
+    depends_on:
+      - backend
+    restart: unless-stopped

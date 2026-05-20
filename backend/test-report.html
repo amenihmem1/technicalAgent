@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rapport Tests Unitaires - Agent Entretien Technique</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f2937;
+      --muted: #667085;
+      --line: #d9e2ec;
+      --ok: #067647;
+      --ok-bg: #e7f8ef;
+      --panel: #ffffff;
+      --page: #f5f7fb;
+      --accent: #7c3aed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--page);
+    }
+
+    main {
+      width: min(1100px, calc(100vw - 48px));
+      margin: 32px auto;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .metric,
+    .test-list {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .metric {
+      padding: 18px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .test-list {
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #475467;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .index {
+      width: 54px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .name {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      color: #344054;
+    }
+
+    .goal {
+      color: #344054;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 84px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--ok);
+      background: var(--ok-bg);
+      border: 1px solid #abefc6;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .footer {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Tests unitaires - Agent d'entretien technique</h1>
+        <p class="subtitle">Execution locale: 12 tests valides sur les garde-fous CV, langue, questions et scoring.</p>
+      </div>
+      <span class="badge">OK</span>
+    </header>
+
+    <section class="summary" aria-label="Resume des tests">
+      <div class="metric">
+        <strong>12</strong>
+        <span>Tests executes</span>
+      </div>
+      <div class="metric">
+        <strong>12</strong>
+        <span>Tests valides</span>
+      </div>
+      <div class="metric">
+        <strong>0</strong>
+        <span>Echecs detectes</span>
+      </div>
+    </section>
+
+    <section class="test-list">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Test</th>
+            <th>Verification</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="index">01</td>
+            <td class="name">test_message_is_allowed_after_cv_upload</td>
+            <td class="goal">Autorise le demarrage apres upload du CV.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">02</td>
+            <td class="name">test_message_is_blocked_before_cv_upload</td>
+            <td class="goal">Bloque l'entretien si le candidat n'a pas encore telecharge son CV.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">03</td>
+            <td class="name">test_course_question_is_accepted_after_question_one</td>
+            <td class="goal">Accepte une question technique du cours apres la question CV.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">04</td>
+            <td class="name">test_course_questions_do_not_accept_cv_topics_after_question_one</td>
+            <td class="goal">Refuse les sujets CV en QUESTION_2, QUESTION_3 et QUESTION_4.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">05</td>
+            <td class="name">test_fallback_course_question_avoids_cv_after_first_question</td>
+            <td class="goal">Verifie que le fallback cours ne reutilise pas le CV.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">06</td>
+            <td class="name">test_fallback_first_question_uses_candidate_name_and_cv</td>
+            <td class="goal">Verifie que la premiere question fallback commence par le nom et le CV.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">07</td>
+            <td class="name">test_french_candidate_message_keeps_french_interview_language</td>
+            <td class="goal">Conserve le francais quand le candidat commence en francais.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">08</td>
+            <td class="name">test_prompt_rules_lock_one_cv_question_then_three_course_questions</td>
+            <td class="goal">Verrouille la regle: 1 question CV puis 3 questions cours.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">09</td>
+            <td class="name">test_question_one_must_be_personalized_from_cv</td>
+            <td class="goal">Exige une premiere question personnalisee avec le nom du candidat.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">10</td>
+            <td class="name">test_rejects_english_question_in_french_session</td>
+            <td class="goal">Refuse une question en anglais dans une session francaise.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">11</td>
+            <td class="name">test_rejects_placeholder_question</td>
+            <td class="goal">Refuse les questions generiques comme "Une seule question technique ?".</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+          <tr>
+            <td class="index">12</td>
+            <td class="name">test_blockchain_answer_with_core_concepts_scores_at_least_three</td>
+            <td class="goal">Verifie que le scoring blockchain n'est pas trop agressif.</td>
+            <td><span class="badge">Valide</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="footer">Commande verifiee: python -m unittest discover -s tests -p "test_*.py" -v - Resultat: Ran 12 tests - OK.</p>
+  </main>
+</body>
+</html>

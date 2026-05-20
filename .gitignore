@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.log
+
+# Environments and secrets
+.env
+.env.local
+.venv/
+venv/
+env/
+backend/.venv/
+frontend/.env.local
+
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+*.tsbuildinfo
+frontend/*.log
+frontend/*.err.log
+
+# Local runtime data
+data/cv_rag/
+data/reports/
+data/sessions/
+backend/data/reports/
+backend/data/sessions/
+backend/data/interviews/
+backend/data/uploads/
+backend/data/*.sqlite
+
+# Keep only the deployable emotion model metadata and model file.
+backend/data/models/*
+!backend/data/models/emotion/
+backend/data/models/emotion/*
+!backend/data/models/emotion/efficientnet_b3_20260425_053142/
+backend/data/models/emotion/efficientnet_b3_20260425_053142/*
+!backend/data/models/emotion/efficientnet_b3_20260425_053142/labels.json
+!backend/data/models/emotion/efficientnet_b3_20260425_053142/metadata.json
+!backend/data/models/emotion/efficientnet_b3_20260425_053142/model.keras
+
+# OS / editor
+**/.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,82 @@
+name: Build and deploy Python app to Azure Web App - rh-subul
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: rh-subul-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Clean old environment
+        run: |
+          rm -rf antenv
+          rm -rf package
+          rm -f app.zip
+
+      - name: Install dependencies
+        run: |
+          python -m venv antenv
+          source antenv/bin/activate
+          pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Prepare backend package
+        run: |
+          test -f backend/data/models/emotion/efficientnet_b3_20260425_053142/model.keras
+          ! grep -q "version https://git-lfs.github.com/spec" backend/data/models/emotion/efficientnet_b3_20260425_053142/model.keras
+          mkdir -p package
+          cp -r backend/. package/
+
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: package
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+          path: package
+
+      - name: Zip package
+        run: |
+          cd package
+          zip -r ../app.zip .
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'rh-subul'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2172638683C043749403C0288F883F31 }}
+          package: app.zip
