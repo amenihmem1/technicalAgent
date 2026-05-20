@@ -37,6 +37,9 @@ def build_intelligence(app_settings: AppSettings) -> Intelligence:
         api_key=settings.api_key,
         base_url=settings.base_url,
         model=settings.model,
+        azure_endpoint=settings.azure_endpoint,
+        azure_deployment=settings.azure_deployment,
+        azure_api_version=settings.azure_api_version,
         max_tokens=settings.max_tokens,
         temperature=settings.temperature,
     )

@@ -10,7 +10,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableLambda
-from langchain_openai import ChatOpenAI
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from openai import RateLimitError
 
 from interview_ai.base import LLMRateLimitError
@@ -28,19 +28,36 @@ class LangChainJSONClient:
         model: str,
         default_temperature: float,
         max_tokens: int,
+        azure_endpoint: str = "",
+        azure_deployment: str = "",
+        azure_api_version: str = "2025-01-01-preview",
     ) -> None:
         self.api_key = api_key
         self.base_url = base_url
         self.model = model
+        self.azure_endpoint = (azure_endpoint or "").strip().rstrip("/")
+        self.azure_deployment = (azure_deployment or "").strip()
+        self.azure_api_version = (azure_api_version or "2025-01-01-preview").strip()
+        self.is_azure = bool(self.azure_endpoint and self.azure_deployment)
         self.default_temperature = default_temperature
         self.max_tokens = max_tokens
-        self.client = ChatOpenAI(
-            model=self.model,
-            api_key=self.api_key,
-            base_url=self.base_url,
-            temperature=self.default_temperature,
-            max_tokens=self.max_tokens,
-        )
+        if self.is_azure:
+            self.client = AzureChatOpenAI(
+                azure_endpoint=self.azure_endpoint,
+                azure_deployment=self.azure_deployment,
+                api_version=self.azure_api_version,
+                api_key=self.api_key,
+                temperature=self.default_temperature,
+                max_tokens=self.max_tokens,
+            )
+        else:
+            self.client = ChatOpenAI(
+                model=self.model,
+                api_key=self.api_key,
+                base_url=self.base_url,
+                temperature=self.default_temperature,
+                max_tokens=self.max_tokens,
+            )
 
     def request_json(
         self,
@@ -105,10 +122,17 @@ class LangChainJSONClient:
     def healthcheck(self) -> dict[str, Any]:
         info: dict[str, Any] = {
             "ok": False,
-            "base_url": self.base_url,
+            "base_url": self.azure_endpoint if self.is_azure else self.base_url,
             "model": self.model,
-            "provider": "langchain",
+            "provider": "azure_openai" if self.is_azure else "langchain",
         }
+        if self.is_azure:
+            info["deployment"] = self.azure_deployment
+            info["api_version"] = self.azure_api_version
+            info["ok"] = bool(self.api_key and self.azure_endpoint and self.azure_deployment)
+            if not info["ok"]:
+                info["error"] = "Azure OpenAI endpoint, deployment ou cle API manquant"
+            return info
         try:
             response = httpx.get(
                 f"{self.base_url}/models",
@@ -164,11 +188,13 @@ class LangChainJSONClient:
                 MessagesPlaceholder(variable_name="conversation"),
             ]
         )
-        model = self.client.bind(
-            temperature=temperature,
-            max_tokens=max_tokens,
-            extra_body={"reasoning_effort": "low", "include_reasoning": False},
-        )
+        bind_kwargs: dict[str, Any] = {
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if not self.is_azure:
+            bind_kwargs["extra_body"] = {"reasoning_effort": "low", "include_reasoning": False}
+        model = self.client.bind(**bind_kwargs)
         return (
             RunnableLambda(lambda payload: payload)
             | prompt

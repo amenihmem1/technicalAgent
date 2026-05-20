@@ -18,15 +18,24 @@ class LangChainIntelligence(StructuredInterviewIntelligence):
         temperature: float = 0.6,
         max_tokens: int = 900,
         base_url: str = "https://api.groq.com/openai/v1",
+        azure_endpoint: str = "",
+        azure_deployment: str = "",
+        azure_api_version: str = "2025-01-01-preview",
     ):
         resolved_base_url, resolved_model = self.resolve_transport_config(
             base_url=base_url,
             model=model,
         )
+        resolved_azure_deployment = (azure_deployment or "").strip()
+        if resolved_azure_deployment:
+            resolved_model = resolved_azure_deployment
         transport = LangChainJSONClient(
             api_key=api_key,
             base_url=resolved_base_url,
             model=resolved_model,
+            azure_endpoint=azure_endpoint,
+            azure_deployment=resolved_azure_deployment,
+            azure_api_version=azure_api_version,
             default_temperature=temperature,
             max_tokens=max_tokens,
         )

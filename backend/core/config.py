@@ -49,6 +49,9 @@ class LLMSettings:
     api_key: str
     base_url: str
     model: str
+    azure_endpoint: str
+    azure_deployment: str
+    azure_api_version: str
     max_tokens: int
     temperature: float
 
@@ -148,7 +151,7 @@ def load_settings() -> AppSettings:
     return AppSettings(
         llm_backend=_read_str("LLM_BACKEND", "langchain").lower(),
         llm=LLMSettings(
-            api_key=_read_first(("LLM_API_KEY", "LANGCHAIN_API_KEY", "GROQ_API_KEY")),
+            api_key=_read_first(("LLM_API_KEY", "AZURE_OPENAI_API_KEY", "LANGCHAIN_API_KEY", "GROQ_API_KEY")),
             base_url=_read_first(
                 ("LLM_BASE_URL", "LANGCHAIN_BASE_URL", "GROQ_BASE_URL"),
                 "https://api.groq.com/openai/v1",
@@ -157,6 +160,9 @@ def load_settings() -> AppSettings:
                 ("LLM_MODEL", "LANGCHAIN_MODEL", "GROQ_MODEL"),
                 "openai/gpt-oss-20b",
             ),
+            azure_endpoint=_read_str("AZURE_OPENAI_ENDPOINT"),
+            azure_deployment=_read_str("AZURE_OPENAI_DEPLOYMENT"),
+            azure_api_version=_read_str("AZURE_OPENAI_API_VERSION", "2025-01-01-preview"),
             max_tokens=_read_int_first(
                 ("LLM_MAX_TOKENS", "LANGCHAIN_MAX_TOKENS", "GROQ_MAX_TOKENS"),
                 320,
