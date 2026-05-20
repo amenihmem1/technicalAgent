@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
 import { CandidateTile } from "./components/CandidateTile";
 import { ControlPanel } from "./components/ControlPanel";
 import { InterviewerVoiceCard } from "./components/InterviewerVoiceCard";
@@ -755,7 +755,7 @@ function hasMultipleScreensSignal() {
   );
 }
 
-export default function HomePage() {
+function HomePageContent() {
   const router = useRouter();
   const [proctoringToast, setProctoringToast] = useState<ProctoringToast | null>(null);
   const [captureShieldVisible, setCaptureShieldVisible] = useState(false);
@@ -2313,5 +2313,13 @@ export default function HomePage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <HomePageContent />
+    </Suspense>
   );
 }
