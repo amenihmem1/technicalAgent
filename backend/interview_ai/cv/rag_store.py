@@ -94,11 +94,9 @@ class CVRAGStore:
         if chunk_size <= 0 or chunk_overlap < 0 or chunk_overlap >= chunk_size:
             raise ValueError("chunk_size / overlap invalides")
 
-        try:
-            self.model = SentenceTransformer(model_name, local_files_only=True)
-            self.dim = self.model.get_sentence_embedding_dimension()
-        except Exception as exc:
-            raise RuntimeError(f"Echec chargement modele {model_name}") from exc
+        self.model_name = model_name
+        self.model: SentenceTransformer | None = None
+        self.dim = 384
 
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
@@ -108,6 +106,15 @@ class CVRAGStore:
 
         self._sessions: dict[SessionId, dict[str, Any]] = {}
         self._last_access: dict[SessionId, datetime] = {}
+
+    def _get_model(self) -> SentenceTransformer:
+        if self.model is None:
+            try:
+                self.model = SentenceTransformer(self.model_name)
+                self.dim = self.model.get_sentence_embedding_dimension()
+            except Exception as exc:
+                raise RuntimeError(f"Echec chargement modele {self.model_name}") from exc
+        return self.model
 
     def _extract_chunks(self, filename: str, content: bytes) -> tuple[str, list[str]]:
         raw_text = extract_text_from_cv(filename, content, logger=logger)
@@ -329,11 +336,11 @@ class CVRAGStore:
         return [dict(item) for item in documents if isinstance(item, dict)]
 
     def _encode(self, text: str) -> np.ndarray:
-        embedding = self.model.encode(text, normalize_embeddings=True)
+        embedding = self._get_model().encode(text, normalize_embeddings=True)
         return np.asarray(embedding, dtype=np.float32).reshape(1, -1)
 
     def _embed_chunks(self, chunks: list[str]) -> np.ndarray:
-        embeddings = self.model.encode(
+        embeddings = self._get_model().encode(
             chunks,
             batch_size=self.embed_batch_size,
             normalize_embeddings=True,
