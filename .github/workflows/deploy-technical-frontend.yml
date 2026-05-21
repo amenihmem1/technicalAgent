@@ -34,7 +34,7 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         env:
-          TECH_API_BASE_URL: https://technical-agent-backend.azurewebsites.net
+          TECH_API_BASE_URL: https://technical-agent-backend-h2geetcegua5dfah.centralus-01.azurewebsites.net
           NEXT_PUBLIC_APP_URL: https://technical-agent-frontend.azurewebsites.net
           NEXT_PUBLIC_REPORT_SHARE_BASE_URL: https://technical-agent-frontend.azurewebsites.net
         run: npm run build
