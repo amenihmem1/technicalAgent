@@ -2,13 +2,17 @@
 
 Backend dedicated to the technical interview agent.
 
-This backend powers the technical interview application.
+This backend powers the technical interview application as independently deployable FastAPI services.
 
-## Current status
+## Microservices
 
-The backend is aligned around the technical interview flow with LangChain orchestration.
+- `infra/nginx/api-gateway.conf` routes public HTTP/WebSocket traffic to internal services.
+- `services.interview.main:app` exposes session, interview, CV, docs, and finalization routes.
+- `services.media.main:app` exposes STT, live STT, TTS, audio, vision, and proctoring routes.
+- `services.analytics.main:app` exposes dashboard/history aggregation routes.
+- `services.reporting.main:app` exposes report PDF routes.
 
-## Planned responsibilities
+## Responsibilities
 
 - technical interview orchestration
 - CV ingestion
@@ -27,20 +31,10 @@ The backend is aligned around the technical interview flow with LangChain orches
 
 ## Suggested local port
 
-- `8001`
+- gateway: `8001`
+- internal services: `8000` inside Docker network
 
-## Test emotion model on one image
+## Deployment
 
-Pour tester le modele d'emotion sans attendre le live camera, lance une analyse sur une image fixe :
-
-```powershell
-python backend/test_emotion_image.py .\chemin\vers\image.jpg --raw-model-only
-```
-
-Tu peux aussi passer plusieurs images dans la meme commande pour charger le modele une seule fois :
-
-```powershell
-python backend/test_emotion_image.py .\img1.jpg .\img2.jpg .\img3.jpg --raw-model-only
-```
-
-Le script utilise le meme modele custom que l'API live et retourne le label, la confiance et les probabilites brutes au format JSON.
+The production microservice path is documented in `../docs/azure-microservices.md`.
+The legacy single-backend workflow is kept as a manual fallback only and no longer runs on pushes to `main`.

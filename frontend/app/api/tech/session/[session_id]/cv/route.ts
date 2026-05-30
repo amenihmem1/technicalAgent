@@ -1,10 +1,7 @@
-﻿import { NextResponse } from "next/server";
+import { backendBaseUrl } from "@/lib/techBackend";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
 
 export async function POST(
   request: Request,
@@ -22,14 +19,14 @@ export async function POST(
 
     const backendUrl = `${backendBaseUrl()}/tech/sessions/${encodeURIComponent(params.session_id)}/cv`;
     console.log("[api/tech/session/[id]/cv] Uploading to:", backendUrl);
-    
+
     const res = await fetch(backendUrl, {
       method: "POST",
       body: forward,
     });
-    
+
     console.log("[api/tech/session/[id]/cv] Backend status:", res.status);
-    
+
     if (!res.ok) {
       const errorText = await res.text();
       console.error("[api/tech/session/[id]/cv] Backend error response:", errorText);
@@ -38,7 +35,7 @@ export async function POST(
         { status: res.status }
       );
     }
-    
+
     const data = await res.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
@@ -47,5 +44,3 @@ export async function POST(
     return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }
-
-

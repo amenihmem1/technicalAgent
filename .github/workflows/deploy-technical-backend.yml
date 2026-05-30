@@ -1,13 +1,10 @@
-name: Deploy technical backend to Azure App Service
+name: Deploy legacy technical backend to Azure App Service
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:
-  group: technical-agent-backend-production
+  group: technical-agent-backend-legacy
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +41,7 @@ jobs:
       - name: Upload backend artifact
         uses: actions/upload-artifact@v4
         with:
-          name: technical-backend
+          name: technical-backend-legacy
           path: package
 
   deploy:
@@ -55,7 +52,7 @@ jobs:
       - name: Download backend artifact
         uses: actions/download-artifact@v4
         with:
-          name: technical-backend
+          name: technical-backend-legacy
           path: package
 
       - name: Zip backend package

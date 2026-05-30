@@ -1,8 +1,5 @@
-﻿export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
+import { backendBaseUrl } from "@/lib/techBackend";
+export const runtime = "nodejs";
 
 type RouteParams = {
   params: Promise<{ session_id: string }>;
@@ -78,5 +75,3 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     return Response.json({ error: (error as Error).message }, { status: 500 });
   }
 }
-
-

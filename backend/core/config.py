@@ -106,9 +106,9 @@ class AppSettings:
 
 def load_backend_env() -> None:
     if ROOT_ENV_FILE.exists():
-        load_dotenv(ROOT_ENV_FILE, override=True)
+        load_dotenv(ROOT_ENV_FILE, override=False)
     if BACKEND_ENV_FILE.exists():
-        load_dotenv(BACKEND_ENV_FILE, override=True)
+        load_dotenv(BACKEND_ENV_FILE, override=False)
 
 
 def _resolve_optional_path(raw_value: str) -> Path | None:

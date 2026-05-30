@@ -1,8 +1,5 @@
-﻿export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
+import { backendBaseUrl } from "@/lib/techBackend";
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
@@ -30,5 +27,3 @@ export async function POST(request: Request) {
     return new Response((error as Error).message, { status: 500 });
   }
 }
-
-

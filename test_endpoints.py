@@ -2,11 +2,11 @@
 import sys
 import traceback
 
-sys.path.insert(0, 'c:\\Users\\ameni\\Desktop\\Stage\\technique-agent\\backend')
+sys.path.insert(0, 'c:\\Users\\ameni\\Desktop\\technique-agent\\backend')
 
 try:
     from orchestrator.session_store import JsonSessionStore
-    from api_server import _build_candidate_history_groups
+    from services.common.runtime import _build_candidate_history_groups
     
     print("[1/3] Initializing session store...")
     store = JsonSessionStore()

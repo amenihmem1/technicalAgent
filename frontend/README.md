@@ -14,12 +14,11 @@ npm run dev -- --port 3001
 
 Open: `http://localhost:3001`
 
-Backend required (FastAPI technical API):
+Backend required (microservice API gateway):
 
 ```bash
 # from project root
-cd technique-agent/backend
-uvicorn api_server:build_app --factory --host 127.0.0.1 --port 8001 --reload
+docker compose up --build api-gateway interview-service media-service analytics-service reporting-service
 ```
 
 Optional backend URL override for proxy routes:

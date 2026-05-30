@@ -1,0 +1,5 @@
+FROM nginx:1.27-alpine
+
+COPY api-gateway.azure.conf.template /etc/nginx/templates/default.conf.template
+
+EXPOSE 8000

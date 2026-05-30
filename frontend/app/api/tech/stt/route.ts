@@ -1,10 +1,7 @@
-﻿import { NextResponse } from "next/server";
+import { backendBaseUrl } from "@/lib/techBackend";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
 
 function normalizeSttLanguage(value: unknown) {
   const normalized = String(value || "").trim().toLowerCase();
@@ -61,5 +58,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
-
-

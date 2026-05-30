@@ -1,8 +1,5 @@
-﻿export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
+import { backendBaseUrl } from "@/lib/techBackend";
+export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,15 +8,15 @@ export async function GET(request: Request) {
   try {
     const backendUrl = `${backendBaseUrl()}/tech/sessions?limit=${encodeURIComponent(limit)}`;
     console.log("[api/tech/sessions] Fetching from:", backendUrl);
-    
+
     const res = await fetch(backendUrl, {
       method: "GET",
       cache: "no-store",
     });
-    
+
     console.log("[api/tech/sessions] Backend status:", res.status);
     console.log("[api/tech/sessions] Backend headers:", Object.fromEntries(res.headers.entries()));
-    
+
     if (!res.ok) {
       const errorText = await res.text();
       console.error("[api/tech/sessions] Backend error response:", errorText);
@@ -28,10 +25,10 @@ export async function GET(request: Request) {
         { status: res.status }
       );
     }
-    
+
     const raw = await res.text();
     console.log("[api/tech/sessions] Response length:", raw.length);
-    
+
     // Validate JSON
     try {
       JSON.parse(raw);
@@ -42,7 +39,7 @@ export async function GET(request: Request) {
         { status: 502 }
       );
     }
-    
+
     return new Response(raw, {
       status: 200,
       headers: {
@@ -56,5 +53,3 @@ export async function GET(request: Request) {
     return Response.json({ error: errorMsg }, { status: 500 });
   }
 }
-
-

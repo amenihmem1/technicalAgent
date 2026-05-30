@@ -1,8 +1,5 @@
+import { backendBaseUrl } from "@/lib/techBackend";
 export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
 
 type RouteParams = {
   params: Promise<{ session_id: string }>;

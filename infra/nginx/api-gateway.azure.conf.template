@@ -1,0 +1,94 @@
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+    listen 8000;
+    server_name _;
+
+    resolver 168.63.129.16 valid=30s ipv6=off;
+
+    client_max_body_size 50m;
+    proxy_read_timeout 300s;
+    proxy_send_timeout 300s;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_ssl_server_name on;
+
+    location = /health {
+        default_type application/json;
+        return 200 '{"status":"ok","service":"api-gateway"}';
+    }
+
+    location = /robots933456.txt {
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    location /tech/dashboard {
+        proxy_set_header Host technique-agent-analytics-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-analytics-service.azurewebsites.net;
+        proxy_pass ${ANALYTICS_SERVICE_URL};
+    }
+
+    location /tech/stt {
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_set_header Host technique-agent-media-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-media-service.azurewebsites.net;
+        proxy_pass ${MEDIA_SERVICE_URL};
+    }
+
+    location /tech/tts {
+        proxy_set_header Host technique-agent-media-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-media-service.azurewebsites.net;
+        proxy_pass ${MEDIA_SERVICE_URL};
+    }
+
+    location /ws/tech/stt {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host technique-agent-media-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-media-service.azurewebsites.net;
+        proxy_pass ${MEDIA_SERVICE_URL};
+    }
+
+    location ~ ^/tech/sessions/[^/]+/(vision|audio|proctoring)$ {
+        proxy_set_header Host technique-agent-media-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-media-service.azurewebsites.net;
+        proxy_pass ${MEDIA_SERVICE_URL};
+    }
+
+    location ~ ^/tech/sessions/[^/]+/(report\.pdf|insights-report\.pdf)$ {
+        proxy_set_header Host technique-agent-reporting-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-reporting-service.azurewebsites.net;
+        proxy_pass ${REPORTING_SERVICE_URL};
+    }
+
+    location /ws/tech/ {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host technique-agent-interview-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-interview-service.azurewebsites.net;
+        proxy_pass ${INTERVIEW_SERVICE_URL};
+    }
+
+    location /tech/sessions {
+        proxy_set_header Host technique-agent-interview-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-interview-service.azurewebsites.net;
+        proxy_pass ${INTERVIEW_SERVICE_URL};
+    }
+
+    location / {
+        proxy_set_header Host technique-agent-interview-service.azurewebsites.net;
+        proxy_ssl_name technique-agent-interview-service.azurewebsites.net;
+        proxy_pass ${INTERVIEW_SERVICE_URL};
+    }
+}

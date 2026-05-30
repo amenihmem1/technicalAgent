@@ -1,10 +1,7 @@
-﻿import { NextResponse } from "next/server";
+import { backendBaseUrl } from "@/lib/techBackend";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-
-function backendBaseUrl() {
-  return process.env.TECH_API_BASE_URL || "http://127.0.0.1:8001";
-}
 
 export async function POST(
   request: Request,
@@ -14,15 +11,15 @@ export async function POST(
     const payload = await request.json();
     const backendUrl = `${backendBaseUrl()}/tech/sessions/${encodeURIComponent(params.session_id)}/message`;
     console.log("[api/tech/session/[id]/message] Posting to:", backendUrl);
-    
+
     const res = await fetch(backendUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    
+
     console.log("[api/tech/session/[id]/message] Backend status:", res.status);
-    
+
     if (!res.ok) {
       const raw = await res.text();
       console.error("[api/tech/session/[id]/message] Backend error response:", raw);
@@ -31,7 +28,7 @@ export async function POST(
         { status: res.status }
       );
     }
-    
+
     const raw = await res.text();
     let data: any;
     try {
@@ -68,5 +65,3 @@ export async function POST(
     return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }
-
-
